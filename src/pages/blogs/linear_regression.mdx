@@ -1,0 +1,34 @@
+---
+layout: ../../layouts/BlogPost.astro
+title: "Linear Regression"
+description: "Notes on the basics of Linear Regression"
+pubDate: 2025-03-30
+tags: ["linear regression", "loss", "gradient descent", "hyperparameters"]
+---
+## Contents
+
+- [Loss](./linear_regression/loss)
+- [Gradient Descent](./linear_regression/gradient_descent)
+- [Hyperparameters](./linear_regression/hyperparameters)
+
+Finds relationship between features and labels.
+
+![LinearRegressionGraph](https://d3p2bvoe452d0z.cloudfront.net/LinearRegressionGraph.png)
+
+
+In mathematics, model is defined as
+
+$$
+y = mx + c
+$$
+
+$y'$ is the predicted label.
+$b$ is the bias. Also denoted as $w_0$. It is calculated during training.
+$w_1$ is the weight of the feature. It is calculated during training.
+$x_1$ is the input feature.
+
+A model can rely on multiple features
+
+$$
+y' = b + w_1x_1 + w_2x_2 + w_3x_3 + ... + w_nx_n
+$$

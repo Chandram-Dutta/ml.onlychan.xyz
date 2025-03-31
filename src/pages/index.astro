@@ -1,11 +1,116 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+import Layout from "../layouts/Layout.astro";
+import "../styles/global.css";
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const allBlogs: any[] = [
+    ...Object.values(import.meta.glob("./blogs/*.mdx", { eager: true })),
+    ...Object.values(import.meta.glob("./blogs/**/*.mdx", { eager: true })),
+];
+
+const blogTree: Record<string, any> = {};
+
+allBlogs.forEach((blog) => {
+    const urlParts = blog.url.split("/");
+
+    const isNested = urlParts.length > 3;
+    const topic = isNested ? urlParts[2] : null;
+
+    if (isNested) {
+        if (!blogTree[topic]) {
+            blogTree[topic] = {
+                children: [],
+                parent: null,
+            };
+        }
+        blogTree[topic].children.push(blog);
+    } else {
+        const blogName = urlParts[2].split(".")[0];
+
+        if (!blogTree[blogName]) {
+            blogTree[blogName] = {
+                children: [],
+                parent: blog,
+            };
+        } else {
+            blogTree[blogName].parent = blog;
+        }
+    }
+});
+
+const sortedTopics = Object.keys(blogTree).sort();
+
+for (const topic of sortedTopics) {
+    if (blogTree[topic].children) {
+        blogTree[topic].children.sort(
+            (a: any, b: any) =>
+                new Date(b.frontmatter.pubDate).valueOf() -
+                new Date(a.frontmatter.pubDate).valueOf(),
+        );
+    }
+}
 ---
 
 <Layout>
-	<Welcome />
+    <main>
+        {
+            allBlogs.length === 0 ? (
+                <p>No blog posts found. Check back soon!</p>
+            ) : (
+                <ul class="space-y-8">
+                    {sortedTopics.map((topic) => {
+                        const { parent, children } = blogTree[topic];
+
+                        return (
+                            <li class="mb-8">
+                                {/* Topic header with parent link if available */}
+                                <div class="mb-4">
+                                    {parent ? (
+                                        <a href={parent.url} class="block">
+                                            <h2 class="text-3xl font-bold text-cyan-500 capitalize hover:text-cyan-400 transition-colors">
+                                                {parent.frontmatter.title}
+                                            </h2>
+                                            <p class="text-gray-300 mt-1">
+                                                {parent.frontmatter.description}
+                                            </p>
+                                        </a>
+                                    ) : (
+                                        <h2 class="text-3xl font-bold text-cyan-500 capitalize">
+                                            {topic.replace("_", " ")}
+                                        </h2>
+                                    )}
+                                </div>
+
+                                {/* Child posts */}
+                                {children.length > 0 && (
+                                    <ul class="space-y-3 ml-6 border-l-2 border-cyan-800 pl-4">
+                                        {children.map((child: any) => (
+                                            <li class="hover:translate-x-1 transition-transform">
+                                                <a
+                                                    href={child.url}
+                                                    class="block"
+                                                >
+                                                    <h3 class="text-xl font-semibold text-cyan-400 hover:text-cyan-300">
+                                                        {
+                                                            child.frontmatter
+                                                                .title
+                                                        }
+                                                    </h3>
+                                                    <p class="text-gray-400 text-sm">
+                                                        {
+                                                            child.frontmatter
+                                                                .description
+                                                        }
+                                                    </p>
+                                                </a>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+                            </li>
+                        );
+                    })}
+                </ul>
+            )
+        }
+    </main>
 </Layout>

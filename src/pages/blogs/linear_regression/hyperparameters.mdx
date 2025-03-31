@@ -1,0 +1,23 @@
+---
+layout: ../../../layouts/BlogPost.astro
+title: "Hyperparameters"
+description: "Notes on the hyperparameters in linear regression"
+pubDate: 2025-03-30
+tags: ["linear regression", "hyperparameters"]
+---
+Hyperparameters control the different aspects of training.
+
+## Common Hyperparameters:
+
+- ### Learning Rate
+	- It is a floating point value that influences how quickly a model converges.
+	- Low learning rate could lead to long time for the model to converge.
+	- High learning rate could make the model to never converge, instead it bounces around the weights and bias that minimize the loss
+	- Learning Rate is basically the small values by which the weights and biases are moved in the direction of minimizing loss.
+- ### Batch Size
+	- Number of examples, the model processes before updating weights and biases.
+	- Two common techniques: 
+		- Stochastic gradient descent (SGD): Uses a single example per iteration(batch size of 1). Leads to Noisy loss curve.
+		- Mini-batch stochastic gradient descent (mini-batch SGD): For N number of data points, the batch size can be any number greater than 1 and less than N. The model chooses the examples included in each batch at random, averages their gradients, and then updates the weights and bias once per iteration.
+- ### Epochs
+	- Epoch means that the model has processed every example in the training set once.![Epoch](https://d3p2bvoe452d0z.cloudfront.net/Epoch.png)

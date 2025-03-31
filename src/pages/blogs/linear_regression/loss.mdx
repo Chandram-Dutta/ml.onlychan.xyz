@@ -1,0 +1,45 @@
+---
+layout: ../../../layouts/BlogPost.astro
+title: "Loss"
+description: "Notes on the loss function in linear regression"
+pubDate: 2025-03-30
+tags: ["linear regression", "loss"]
+---
+Loss is the metric of how wrong a model's predictions are.
+
+![Loss](https://d3p2bvoe452d0z.cloudfront.net/Loss.png)
+
+## Types of Loss
+
+- ### L$_1$ Loss: 
+	The sum of the absolute values of the difference between the predicted values and the actual values
+	
+	$$
+	\sum |\text{actual value} - \text{predicted\ value}|
+	$$
+
+- ### MAE Loss
+	Mean Absolute Error is the average of L$_1$ losses across a set of examples
+	
+	$$
+	\frac{1}{n}\sum|\text{actual value} - \text{predicted value}|
+	$$
+
+- ### L$_2$ Loss
+	The sum of the squared difference between the predicted values and the actual values
+	
+	$$
+	\sum(\text{actual value} - \text{predicted value})^2
+	$$
+
+- ### MSE Loss
+	The average of L$_2$ losses across a set of examples
+	
+	$$
+	\frac{1}{n}\sum(\text{actual value} - \text{predicted value})^2
+	$$
+## Choosing the type of loss
+
+MSE: The model is closer to the outliers but further away from most of the other data points.
+
+MAE:The model is further away from the outliers but closer to most of the other data points.
