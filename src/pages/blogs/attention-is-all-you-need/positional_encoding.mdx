@@ -1,0 +1,45 @@
+---
+layout: ../../../layouts/BlogPost.astro
+title: "Positional Encoding"
+description: "Positional Encoding in transformers"
+pubDate: 2025-04-1
+tags: ["transformer", "mlx", "python", "positional encoding"]
+---
+
+### Positional Encoding
+
+<img src="https://d3p2bvoe452d0z.cloudfront.net/positional_encoding.png" width="400" alt="Positional Encoding in the Transformer architectire" class="rounded-lg"/>
+
+The Transformer has no recurrence and no convolution, so it doesn’t know the order of tokens. We inject position info using sinusoidal functions as these have nice properties like allowing the model to learn relative position shifts.
+
+Let $pos$ be the position $(0,1,2,...,seq\_len-1)$<br />
+Let $i$ be the embedding dimension index $(0...d_{model}-1)$
+
+$$
+PE_{pos,2i} = \sin{\frac{pos}{10000^{2i/d_{model}}}}
+$$
+$$
+PE_{pos,2i+1} = \cos{\frac{pos}{10000^{2i/d_{model}}}}
+$$
+
+- Even indices use sine
+- Odd indices use cosine
+
+This creates a smooth, wave-like encoding that can be added directly to the embeddings.
+
+### Code
+```python
+def positional_encoding(seq_len: int, d_model: int) -> mx.array:
+    pos = mx.arange(seq_len).reshape(-1, 1)
+    i = mx.arange(d_model).reshape(1, -1)
+
+    angle_rates = 1 / mx.power(10000.0, (2 * (i // 2)) / d_model)
+    angles = pos * angle_rates
+
+    pos_enc = mx.where(i % 2 == 0, mx.sin(angles), mx.cos(angles))
+    return pos_enc
+
+seq_len = x.shape[0]
+
+x = x + positional_encoding(seq_len, d_model)
+```

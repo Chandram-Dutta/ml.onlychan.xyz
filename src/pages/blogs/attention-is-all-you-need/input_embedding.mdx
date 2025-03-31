@@ -8,7 +8,7 @@ tags: ["transformer", "mlx", "python", "input embedding"]
 
 ### Input Embedding
 
-<img src="https://d3p2bvoe452d0z.cloudfront.net/input_embedding.png" width="400" alt="Input Embedding in the Transformer architectire"/>
+<img src="https://d3p2bvoe452d0z.cloudfront.net/input_embedding.png" width="400" alt="Input Embedding in the Transformer architectire" class="rounded-lg"/>
 
 Input Embedding is the very first checkpoint in the transformer model. So basically, neural networks cannot work with tokens like "Hi" or `ID 32`, they need vectors. So we map each token ID to a dense matrix that represents its meaning in a high-dimensional space.
 
@@ -50,9 +50,9 @@ We can then create a embedding matrix using [`mlx.nn.Embedding`](https://ml-expl
 embedding = nn.Embedding(vocab_size, d_model)
 
 tokens = mx.array([17, 421, 6])
-embedded_tokens = embedding(tokens)
+x = embedding(tokens)
 
-print(embedded_tokens.shape) # -> (3, 512)
+print(x.shape) # -> (3, 512)
 ```
 
 ### Complete Code
@@ -66,7 +66,7 @@ d_model = 512
 embedding = nn.Embedding(vocab_size, d_model)
 
 tokens = mx.array([17, 421, 6])
-embedded_tokens = embedding(tokens)
+x = embedding(tokens)
 
-print(embedded_tokens.shape)
+print(x.shape)
 ```
