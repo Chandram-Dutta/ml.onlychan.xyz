@@ -62,11 +62,10 @@ for (const topic of sortedTopics) {
 
                         return (
                             <li class="mb-8">
-                                {/* Topic header with parent link if available */}
                                 <div class="mb-4">
                                     {parent ? (
                                         <a href={parent.url} class="block">
-                                            <h2 class="text-3xl font-bold text-cyan-500 capitalize hover:text-cyan-400 transition-colors">
+                                            <h2 class="text-3xl font-bold text-cyan-500 capitalize hover:text-cyan-400 transition-colors font-serif">
                                                 {parent.frontmatter.title}
                                             </h2>
                                             <p class="text-gray-300 mt-1">
@@ -80,7 +79,6 @@ for (const topic of sortedTopics) {
                                     )}
                                 </div>
 
-                                {/* Child posts */}
                                 {children.length > 0 && (
                                     <ul class="space-y-3 ml-6 border-l-2 border-cyan-800 pl-4">
                                         {children.map((child: any) => (
@@ -89,7 +87,7 @@ for (const topic of sortedTopics) {
                                                     href={child.url}
                                                     class="block"
                                                 >
-                                                    <h3 class="text-xl font-semibold text-cyan-400 hover:text-cyan-300">
+                                                    <h3 class="text-xl font-semibold text-cyan-400 hover:text-cyan-300 font-serif">
                                                         {
                                                             child.frontmatter
                                                                 .title

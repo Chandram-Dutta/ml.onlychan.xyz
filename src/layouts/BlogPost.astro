@@ -7,13 +7,18 @@ const { frontmatter } = Astro.props;
 <Layout>
     <article class="max-w-3xl mx-auto pb-4">
         <div class="mb-8">
-            <a href="/" class="text-cyan-500 hover:underline mb-4 inline-block">
+            <a
+                href="/"
+                class="text-cyan-500 hover:underline mb-4 inline-block font-serif"
+            >
                 &larr; Back to all posts
             </a>
-            <h1 class="text-4xl font-bold font-shippori-antique-b1 mt-4 mb-2">
+            <h1
+                class="text-4xl font-bold font-shippori-antique-b1 mt-4 mb-2 font-serif"
+            >
                 {frontmatter.title}
             </h1>
-            <p class="text-gray-400 mb-4">
+            <p class="text-gray-400 mb-4 font-serif">
                 {
                     new Date(frontmatter.pubDate).toLocaleDateString("en-us", {
                         year: "numeric",

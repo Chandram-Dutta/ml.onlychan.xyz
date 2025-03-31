@@ -1,7 +1,11 @@
 @import "tailwindcss";
-@import "@fontsource/merriweather";
+@import "@fontsource/instrument-serif";
+@import "@fontsource-variable/noto-sans";
+@import "@fontsource-variable/jetbrains-mono";
 @plugin '@tailwindcss/typography';
 
 @theme {
-    --font-serif: "Merriweather", "serif";
+    --font-serif: "Instrument Serif", "serif";
+    --font-sans: "Noto Sans Variable", "sans-serif";
+    --font-mono: "JetBrains Mono Variable", "monospace";
 }

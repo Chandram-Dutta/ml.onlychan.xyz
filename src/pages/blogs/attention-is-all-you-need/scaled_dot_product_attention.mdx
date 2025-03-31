@@ -1,0 +1,62 @@
+---
+layout: ../../../layouts/BlogPost.astro
+title: "Scaled Dot-Product Attention"
+description: "Scaled Dot-Product Attention in transformers"
+pubDate: 2025-04-1
+tags: ["transformer", "mlx", "python", "scaled dot-product attention"]
+---
+
+### Scaled Dot-Product Attention
+
+<img src="https://d3p2bvoe452d0z.cloudfront.net/scaled_dot_product_attention.png" width="400" alt="Scaled Dot-Product Attention" class="rounded-lg"/>
+
+Attention helps the model focus on relevant parts of the input for each word
+
+Given a set of input vectors, attention computes:
+> For each word (the query), look at all other words (the keys) and decide how much to attend to them. Then compute a weighted sum of their values.
+
+The Scaled Dot-Attention Formula:
+$$
+\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V
+$$
+
+where $Q$ is the query, $K$ is the key, $V$ is the value, and $d_k$ is the dimension of the key vectors.
+
+To caluculate step-by-step, we can
+- Compute Attention Scores
+$$
+scores = QK^T
+$$
+- Scale the scores
+$$
+scaled\_scores = \frac{scores}{\sqrt{d_k}}
+$$
+- Apply softmax to get attention weights
+$$
+weights = \text{softmax}(scaled\_scores)
+$$
+- Compute the final output
+$$
+output = weights.V
+$$
+
+We will get $Q,K,V$ from input embedding but that's for the next part, Multi-Head Attention.
+
+### Code
+```python
+def scaled_dot_product_attention(
+    Q: mx.array, K: mx.array, V: mx.array, mask: Optional[mx.array] = None
+) -> Tuple[mx.array, mx.array]:
+    d_k = Q.shape[-1]
+
+    scores = mx.matmul(Q, K.transpose(0, 2, 1))
+    scores = scores / math.sqrt(d_k)
+
+    if mask is not None:
+        scores = mx.where(mask == 0, -1e9, scores)
+
+    weights = mx.softmax(scores, axis=-1)
+    output = mx.matmul(weights, V)
+
+    return output, weights
+```
