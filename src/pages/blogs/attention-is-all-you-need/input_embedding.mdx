@@ -5,3 +5,68 @@ description: "Input Embedding in transformers"
 pubDate: 2025-04-1
 tags: ["transformer", "mlx", "python", "input embedding"]
 ---
+
+### Input Embedding
+
+<img src="https://d3p2bvoe452d0z.cloudfront.net/input_embedding.png" width="400" alt="Input Embedding in the Transformer architectire"/>
+
+Input Embedding is the very first checkpoint in the transformer model. So basically, neural networks cannot work with tokens like "Hi" or `ID 32`, they need vectors. So we map each token ID to a dense matrix that represents its meaning in a high-dimensional space.
+
+So let's say we have a vocabulary of size $V$(eg. 50000) and a model dimension of $d_{model}$(eg. 512).
+
+Then the embedding matrix $E$ is a 2D matrix:
+
+$$
+E \in \mathbb{R}^{V \times d_{\text{model}}}
+$$
+
+So if our input token sequence is:
+```python
+[17, 421, 6]
+```
+then our embedded input token sequence should be:
+```python
+[E[17], E[421], E[6]] -> shape: (3, d_model)
+```
+
+This embedding matrix is _learned_ during training. We can it intialize randomnly or use pre-trained embeddings.
+
+### Code
+Let's implement this in Apple's MLX framework. It takes its inspiration from prominent libraries like NumPy, etc. You can implement this in the framework of your choice if you have the basic knowledge.
+
+We will start by import `mlx.core` and `mlx.nn` and have two variables `vocab_size` and `d_model`.
+
+```python
+import mlx.core as mx
+import mlx.nn as nn
+
+vocab_size = 50000
+d_model = 512
+```
+
+We can then create a embedding matrix using [`mlx.nn.Embedding`](https://ml-explore.github.io/mlx/build/html/python/nn/_autosummary/mlx.nn.Embedding.html) along with an example token input sequence. After which we create an `embedded_tokens` matrix which are lookup embeddings of input sequence from the embedding matrix.
+
+```python
+embedding = nn.Embedding(vocab_size, d_model)
+
+tokens = mx.array([17, 421, 6])
+embedded_tokens = embedding(tokens)
+
+print(embedded_tokens.shape) # -> (3, 512)
+```
+
+### Complete Code
+```python
+import mlx.core as mx
+import mlx.nn as nn
+
+vocab_size = 50000
+d_model = 512
+
+embedding = nn.Embedding(vocab_size, d_model)
+
+tokens = mx.array([17, 421, 6])
+embedded_tokens = embedding(tokens)
+
+print(embedded_tokens.shape)
+```
