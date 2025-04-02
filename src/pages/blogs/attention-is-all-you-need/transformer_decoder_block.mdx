@@ -1,0 +1,58 @@
+---
+layout: ../../../layouts/BlogPost.astro
+title: "Transformer Decoder Block"
+description: "Transformer Encoder Block in transformers"
+pubDate: 2025-04-2
+tags: ["transformer", "mlx", "python", "transformer decoder block", "multi head attention", "feed forward network"]
+rank: 6
+---
+
+### Transformer Decoder Block
+
+Each decoder block consists of:
+- Masked Multi-Head Self-Attention
+- Encoder-Decoder Attention (cross-attention)
+- Feedforward Network (same as in encoder)
+
+<img src="https://d3p2bvoe452d0z.cloudfront.net/transformer_decoder_block.png" width="400" alt="Transformer Decoder Block" class="rounded-lg"/>
+
+Each is wrapped with LayerNorm and residual connections.
+
+### Code
+```python
+import mlx.core as mx
+import mlx.nn as nn
+from multi_head_attention import MultiHeadAttention
+from typing import Optional
+
+class TransformerDecoderBlock(nn.Module):
+    def __init__(self, d_model: int, num_heads: int, d_ff: int):
+        super().__init__()
+        self.self_attn = MultiHeadAttention(d_model, num_heads)
+        self.cross_attn = MultiHeadAttention(d_model, num_heads)
+
+        self.norm1 = nn.LayerNorm(d_model)
+        self.norm2 = nn.LayerNorm(d_model)
+        self.norm3 = nn.LayerNorm(d_model)
+
+        self.ffn = nn.Sequential(
+            nn.Linear(d_model, d_ff),
+            nn.ReLU(),
+            nn.Linear(d_ff, d_model)
+        )
+
+    def __call__(
+            self,
+            x: mx.array,
+            enc_output: mx.array,
+            self_mask: Optional[mx.array] = None,
+            enc_dec_mask: Optional[mx.array] = None
+        ) -> mx.array:
+        x = x + self.self_attn(self.norm1(x), self_mask)
+
+        x = x + self.cross_attn(self.norm2(x), enc_dec_mask, enc_output)
+
+        x = x + self.ffn(self.norm3(x))
+
+        return x
+```
