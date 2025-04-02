@@ -42,9 +42,7 @@ const sortedTopics = Object.keys(blogTree).sort();
 for (const topic of sortedTopics) {
     if (blogTree[topic].children) {
         blogTree[topic].children.sort(
-            (a: any, b: any) =>
-                new Date(b.frontmatter.pubDate).valueOf() -
-                new Date(a.frontmatter.pubDate).valueOf(),
+            (a: any, b: any) => a.frontmatter.rank - b.frontmatter.rank,
         );
     }
 }

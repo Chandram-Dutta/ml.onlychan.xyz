@@ -4,6 +4,7 @@ title: "Hyperparameters"
 description: "Notes on the hyperparameters in linear regression"
 pubDate: 2025-03-30
 tags: ["linear regression", "hyperparameters"]
+rank: 1
 ---
 Hyperparameters control the different aspects of training.
 
@@ -16,7 +17,7 @@ Hyperparameters control the different aspects of training.
 	- Learning Rate is basically the small values by which the weights and biases are moved in the direction of minimizing loss.
 - ### Batch Size
 	- Number of examples, the model processes before updating weights and biases.
-	- Two common techniques: 
+	- Two common techniques:
 		- Stochastic gradient descent (SGD): Uses a single example per iteration(batch size of 1). Leads to Noisy loss curve.
 		- Mini-batch stochastic gradient descent (mini-batch SGD): For N number of data points, the batch size can be any number greater than 1 and less than N. The model chooses the examples included in each batch at random, averages their gradients, and then updates the weights and bias once per iteration.
 - ### Epochs

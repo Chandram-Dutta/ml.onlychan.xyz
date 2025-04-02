@@ -8,6 +8,8 @@ import rehypeKatex from "rehype-katex";
 
 import node from "@astrojs/node";
 
+import astroD2 from "astro-d2";
+
 // https://astro.build/config
 export default defineConfig({
   vite: {
@@ -19,6 +21,7 @@ export default defineConfig({
       remarkPlugins: [remarkMath],
       rehypePlugins: [rehypeKatex],
     }),
+    astroD2(),
   ],
 
   adapter: node({

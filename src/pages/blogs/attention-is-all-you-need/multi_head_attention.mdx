@@ -1,0 +1,66 @@
+---
+layout: ../../../layouts/BlogPost.astro
+title: "Multi Head Attention"
+description: "Multi Head Attention in transformers"
+pubDate: 2025-04-2
+tags: ["transformer", "mlx", "python", "multi head attention", "scaled dot-product attention"]
+rank: 3
+---
+
+### Multi Head Attention
+
+<img src="https://d3p2bvoe452d0z.cloudfront.net/multi_head_attention.png" width="400" alt="Multi Head Attention" class="rounded-lg"/>
+
+One single attention head might focus on one pattern — like subject-verb relations.
+But with multiple heads, the model can learn different kinds of patterns at the same time!
+
+Each head gets its own projection of the input and learns its own attention behavior.
+
+Remember $Q$, $K$, and $V$ are the queries, keys, and values respectively from [scaled dot-product attention](../attention-is-all-you-need/scaled_dot_product_attention).
+$$
+Q_i = XW^Q_i,\quad K_i = XW^K_i,\quad V_i = XW^V_i
+$$
+
+We will run the scaled dot-product attention for each head and concatenate the results and then project them to the final output.
+
+### Code
+
+```python
+import mlx.nn as nn
+import mlx.core as mx
+from mlx.nn.utils import Optional
+from main import scaled_dot_product_attention
+
+class MultiHeadAttention(nn.Module):
+    def __init__(self, d_model: int, num_heads: int):
+        super().__init__()
+        self.d_model = d_model
+        self.num_heads = num_heads
+        self.head_dim = d_model // num_heads
+        assert d_model % num_heads == 0, "d_model must be divisible by num_heads"
+        self.q_proj = nn.Linear(d_model, d_model)
+        self.k_proj = nn.Linear(d_model, d_model)
+        self.v_proj = nn.Linear(d_model, d_model)
+        self.out_proj = nn.Linear(d_model, d_model)
+
+    def split_heads(self, x: mx.array, batch_size: int):
+        x = x.reshape(batch_size, -1, self.num_heads, self.head_dim)
+        return x.transpose(0, 2, 1, 3)
+
+    def combine_heads(self, x: mx.array):
+        x = x.transpose(0, 2, 1, 3)
+        return x.reshape(x.shape[0], x.shape[1], self.d_model)
+
+    def __call__(self, x: mx.array, mask: Optional[mx.array] = None) -> mx.array:
+        batch_size = x.shape[0]
+
+        Q = self.split_heads(self.q_proj(x), batch_size)
+        K = self.split_heads(self.k_proj(x), batch_size)
+        V = self.split_heads(self.v_proj(x), batch_size)
+
+        attn_out, _ = scaled_dot_product_attention(Q, K, V, mask)
+
+        out = self.combine_heads(attn_out)
+        return self.out_proj(out)
+
+```

@@ -1,0 +1,85 @@
+---
+layout: ../../../layouts/BlogPost.astro
+title: "Transformer Encoder Block"
+description: "Transformer Encoder Block in transformers"
+pubDate: 2025-04-2
+tags: ["transformer", "mlx", "python", "transformer encoder block", "multi head attention", "feed forward network"]
+rank: 4
+---
+
+### Transformer Encoder Block
+
+<img src="https://d3p2bvoe452d0z.cloudfront.net/transformer_encoder_block.png" width="400" alt="Multi Head Attention" class="rounded-lg"/>
+
+Each encoder block consists of:
+
+```
+Input
+  │
+[LayerNorm]
+  │
+Multi-Head Attention
+  │
++ Residual Connection
+  │
+[LayerNorm]
+  │
+Feedforward Network
+  │
++ Residual Connection
+```
+
+### Feedforward Network
+
+Attention mixes information across tokens. FFN lets the model process each token deeply and independently
+
+The Feedforward Network is applied independently to each position (token) in the sequence, after attention. It gives the model more capacity to process and transform each token’s representation.
+
+$$
+\text{FFN}(x) = \max(0, xW_1 + b_1)W_2 + b_2
+$$
+
+You can represent it in code by
+
+```python
+import mlx.nn as nn
+
+self.ffn = nn.Sequential(
+    nn.Linear(d_model, d_ff),
+    nn.ReLU(),
+    nn.Linear(d_ff, d_model)
+)
+```
+
+### Code
+
+```python
+from typing import Optional
+import mlx.nn as nn
+import mlx.core as mx
+
+from multi_head_attention import MultiHeadAttention
+
+class TransformerEncoderBlock(nn.Module):
+    def __init__(self, d_model: int, num_heads: int, d_ff: int):
+        super().__init__()
+        self.mha = MultiHeadAttention(d_model, num_heads)
+        self.norm1 = nn.LayerNorm(d_model)
+        self.norm2 = nn.LayerNorm(d_model)
+
+        self.ffn = nn.Sequential(
+            nn.Linear(d_model, d_ff),
+            nn.ReLU(),
+            nn.Linear(d_ff, d_model)
+        )
+
+    def __call__(self, x: mx.array, mask: Optional[mx.array] = None) -> mx.array:
+        attn_output = self.mha(self.norm1(x), mask)
+        x = x + attn_output
+
+        ffn_output = self.ffn(self.norm2(x))
+        x = x + ffn_output
+
+        return x
+
+```
