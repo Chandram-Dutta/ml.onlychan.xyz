@@ -1,0 +1,32 @@
+---
+layout: ../../../layouts/BlogPost.astro
+title: "Transformer Encoder"
+description: "Transformer Encoder in transformers"
+pubDate: 2025-04-2
+tags: ["transformer", "mlx", "python", "transformer encoder block", "transformer encoder"]
+rank: 5
+---
+
+### Transformer Encoder
+
+A Transformer Encoder stacks multiple `TransformerEncoderBlocks` and applies `LayerNorm` to the output of the last block. The output of the encoder is a sequence of vectors, each representing a token in the input sequence, but now enriched with contextual information from the entire sequence. It is the final output of the encoder and is used as input to the decoder in a Transformer model.
+
+### Code
+
+```python
+import mlx.nn as nn
+import mlx.core as mx
+from src.transformer_encoder_block import TransformerEncoderBlock
+from typing import Optional
+
+class TransformerEncoder(nn.Module):
+    def __init__(self, num_layers: int, d_model: int, num_heads: int, d_ff: int):
+        super().__init__()
+        self.layers = [TransformerEncoderBlock(d_model, num_heads, d_ff) for _ in range(num_layers)]
+        self.final_norm = nn.LayerNorm(d_model)
+
+    def __call__(self, x: mx.array, mask: Optional[mx.array] = None) -> mx.array:
+        for layer in self.layers:
+            x = layer(x, mask)
+        return self.final_norm(x)
+```
