@@ -1,0 +1,22 @@
+---
+layout: ../../../layouts/BlogPost.astro
+title: "Look Ahead Mask"
+description: "Look Ahead Mask in transformers"
+pubDate: 2025-04-2
+tags: ["transformer", "mlx", "python", "transformer decoder", "look ahead mask"]
+rank: 8
+---
+
+### Look Ahead Mask
+
+For a target sequence of length `seq_len`, we want to create a binary mask where each token can only “see” itself and previous tokens — not future ones. We apply it during decoder self-attention.
+
+### Code
+
+```python
+import mlx.core as mx
+
+def generate_look_ahead_mask(seq_len: int) -> mx.array:
+    mask = mx.tril(mx.ones((seq_len, seq_len)), k=0)
+    return mask[None, None, :, :]
+```
