@@ -1,0 +1,42 @@
+---
+layout: ../../../layouts/BlogPost.astro
+title: "Transformer Decoder"
+description: "Transformer Decoder in transformers"
+pubDate: 2025-04-2
+tags: ["transformer", "mlx", "python", "transformer decoder block", "transformer decoder"]
+rank: 7
+---
+
+### Transformer Decoder
+
+Just like the encoder, the decoder stack is made of N repeated decoder blocks, usually 6 along with final layer norm.
+
+### Code
+
+```python
+import mlx.core as mx
+import mlx.nn as nn
+from transformer_decoder_block import TransformerDecoderBlock
+from typing import Optional
+
+class TransformerDecoder(nn.Module):
+    def __init__(self, num_layers: int, d_model: int, num_heads: int, d_ff: int):
+        super().__init__()
+        self.layers = [
+            TransformerDecoderBlock(d_model, num_heads, d_ff)
+            for _ in range(num_layers)
+        ]
+        self.final_norm = nn.LayerNorm(d_model)
+
+    def __call__(
+        self,
+        x: mx.array,
+        enc_output: mx.array,
+        self_mask: Optional[mx.array] = None,
+        enc_dec_mask: Optional[mx.array] = None
+    ) -> mx.array:
+        for layer in self.layers:
+            x = layer(x, enc_output, self_mask, enc_dec_mask)
+        return self.final_norm(x)
+
+```
